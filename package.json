@@ -13,20 +13,21 @@
     "url": "https://github.com/morinokami/ptree/issues"
   },
   "homepage": "https://github.com/morinokami/ptree#readme",
-  "main": "build/ptree.js",
+  "main": "dist/cli.js",
   "bin": {
-    "ptree": "build/ptree.js"
+    "ptree": "dist/cli.js"
   },
   "files": [
-    "build"
+    "dist"
   ],
   "scripts": {
-    "build": "esbuild src/ptree.ts --bundle --platform=node --target=node12 --outdir=build",
+    "build": "esbuild src/cli.ts --bundle --platform=node --target=node12 --outdir=dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src/**/*.ts"
   },
   "devDependencies": {
     "@types/node": "^16.11.21",
+    "@types/yargs": "^17.0.8",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "esbuild": "^0.14.12",
@@ -34,5 +35,8 @@
     "prettier": "^2.5.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "yargs": "^17.3.1"
   }
 }
