@@ -13,15 +13,15 @@
     "url": "https://github.com/morinokami/ptree/issues"
   },
   "homepage": "https://github.com/morinokami/ptree#readme",
-  "main": "build/ptree.js",
+  "main": "dist/cli.js",
   "bin": {
-    "ptree": "build/ptree.js"
+    "ptree": "dist/cli.js"
   },
   "files": [
-    "build"
+    "dist"
   ],
   "scripts": {
-    "build": "esbuild src/ptree.ts --bundle --platform=node --target=node12 --outdir=build",
+    "build": "esbuild src/cli.ts --bundle --platform=node --target=node12 --outdir=dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src/**/*.ts"
   },

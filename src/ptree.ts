@@ -1,20 +1,18 @@
-#!/usr/bin/env node
-
 import { lstat, readdir } from "fs/promises";
 import { join } from "path";
 
-interface PTreeOptions {
+export interface PTreeOptions {
   maxDepth?: number;
 }
 
-interface DirEntry {
+export interface DirEntry {
   isDirectory: boolean;
   // isFile: boolean;
   // isSymlink: boolean;
   name: string;
 }
 
-async function ptree(
+export async function ptree(
   root: string,
   { maxDepth = Infinity }: PTreeOptions = {},
   indent = ""
@@ -43,5 +41,3 @@ async function ptree(
     }
   }
 }
-
-ptree(".", { maxDepth: 2 });
