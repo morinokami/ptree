@@ -2,23 +2,29 @@
   "name": "ptree",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "keywords": [],
+  "author": "Shinya Fujino <shf0811@gamil.com> (https://github.com/morinokami)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morinokami/ptree.git"
+  },
+  "bugs": {
+    "url": "https://github.com/morinokami/ptree/issues"
+  },
+  "homepage": "https://github.com/morinokami/ptree#readme",
+  "main": "build/ptree.js",
+  "bin": {
+    "ptree": "build/ptree.js"
+  },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build": "esbuild src/ptree.ts --bundle --platform=node --target=node12 --outdir=build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src/**/*.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/morinokami/ptree.git"
-  },
-  "keywords": [],
-  "author": "Shinya Fujino <shf0811@gamil.com> (https://github.com/morinokami)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/morinokami/ptree/issues"
-  },
-  "homepage": "https://github.com/morinokami/ptree#readme",
   "devDependencies": {
     "@types/node": "^16.11.21",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
