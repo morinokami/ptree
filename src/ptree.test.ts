@@ -68,14 +68,14 @@ describe("ptree", () => {
   it("prints only name if empty directory given", async () => {
     await ptree("emptyDir");
     // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([["emptyDir"], ["\n"]]);
+    expect(process.stdout.write.mock.calls).toEqual([["📁 emptyDir"], ["\n"]]);
   });
 
   it("prints tree with emojis", async () => {
     await ptree("foo");
     // @ts-ignore
     expect(process.stdout.write.mock.calls).toEqual([
-      ["foo"],
+      ["📁 foo"],
       ["\n"],
       ["├── 📄 bar.txt"],
       ["\n"],
@@ -98,7 +98,7 @@ describe("ptree", () => {
     await ptree("foo", { maxDepth: 1 });
     // @ts-ignore
     expect(process.stdout.write.mock.calls).toEqual([
-      ["foo"],
+      ["📁 foo"],
       ["\n"],
       ["├── 📄 bar.txt"],
       ["\n"],
@@ -113,7 +113,7 @@ describe("ptree", () => {
     await ptree("unreadableDir");
     // @ts-ignore
     expect(process.stdout.write.mock.calls).toEqual([
-      ["unreadableDir"],
+      ["📁 unreadableDir"],
       [" [error opening dir]\n"],
     ]);
   });

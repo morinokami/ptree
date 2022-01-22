@@ -33,7 +33,7 @@ export async function ptree(
   }
 
   if (indent.length === 0) {
-    process.stdout.write(`${root}`);
+    process.stdout.write(`📁 ${root}`);
   }
 
   let entries: DirEntry[] = [];
