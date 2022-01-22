@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import mockConsole, { RestoreConsole } from "jest-mock-console";
 import mockFs from "mock-fs";
 
 import { ptree, readDir } from "./ptree";
@@ -42,9 +41,8 @@ describe("readDir", () => {
 });
 
 describe("ptree", () => {
-  let restoreConsole: RestoreConsole;
   beforeEach(() => {
-    restoreConsole = mockConsole();
+    process.stdout.write = jest.fn();
     mockFs({
       foo: {
         "bar.txt": "",
@@ -54,46 +52,69 @@ describe("ptree", () => {
         meow: "",
       },
       emptyDir: {},
+      unreadableDir: mockFs.directory({
+        mode: 0,
+        items: {
+          "unreadable.txt": "",
+        },
+      }),
     });
   });
 
   afterEach(() => {
-    restoreConsole();
     mockFs.restore();
   });
 
   it("prints only name if empty directory given", async () => {
     await ptree("emptyDir");
     // @ts-ignore
-    expect(console.log.mock.calls).toEqual([["emptyDir"]]);
+    expect(process.stdout.write.mock.calls).toEqual([["emptyDir"], ["\n"]]);
   });
 
   it("prints tree with emojis", async () => {
     await ptree("foo");
     // @ts-ignore
-    expect(console.log.mock.calls).toEqual([
+    expect(process.stdout.write.mock.calls).toEqual([
       ["foo"],
+      ["\n"],
       ["├── 📄 bar.txt"],
+      ["\n"],
       ["├── 📁 baz"],
+      ["\n"],
       ["│   └── 📄 hello"],
+      ["\n"],
       ["└── 📄 meow"],
+      ["\n"],
     ]);
   });
 
   it("prints nothing if depth < 1", async () => {
     await ptree("foo", { maxDepth: 0 });
     // @ts-ignore
-    expect(console.log.mock.calls).toEqual([]);
+    expect(process.stdout.write.mock.calls).toEqual([]);
   });
 
   it("prints only direct children if depth = 1", async () => {
     await ptree("foo", { maxDepth: 1 });
     // @ts-ignore
-    expect(console.log.mock.calls).toEqual([
+    expect(process.stdout.write.mock.calls).toEqual([
       ["foo"],
+      ["\n"],
       ["├── 📄 bar.txt"],
+      ["\n"],
       ["├── 📁 baz"],
+      ["\n"],
       ["└── 📄 meow"],
+      ["\n"],
+    ]);
+  });
+
+  it("prints only name if directory is unreadable", async () => {
+    await ptree("unreadableDir");
+    // @ts-ignore
+    expect(process.stdout.write.mock.calls).toEqual([
+      ["unreadableDir"],
+      [" [error opening dir]\n"],
     ]);
   });
 });

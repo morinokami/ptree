@@ -32,19 +32,29 @@ export async function ptree(
     return;
   }
 
-  const entries = await readDir(root);
-
-  if (indent === "") {
-    console.log(`${root}`);
+  if (indent.length === 0) {
+    process.stdout.write(`${root}`);
   }
+
+  let entries: DirEntry[] = [];
+  try {
+    entries = await readDir(root);
+  } catch (err) {
+    process.stdout.write(" [error opening dir]\n");
+    return;
+  }
+  process.stdout.write("\n");
+
   for await (const entry of entries) {
     const branch = entry === entries[entries.length - 1] ? "└── " : "├── ";
     const emoji = entry.isDirectory ? "📁" : "📄";
-    console.log(`${indent}${branch}${emoji} ${entry.name}`);
+    process.stdout.write(`${indent}${branch}${emoji} ${entry.name}`);
 
-    if (entry.isDirectory) {
+    if (entry.isDirectory && maxDepth > 1) {
       const path = join(root, entry.name);
       await ptree(path, { maxDepth: maxDepth - 1 }, `${indent}│   `);
+    } else {
+      process.stdout.write("\n");
     }
   }
 }
