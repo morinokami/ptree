@@ -21,9 +21,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "esbuild src/cli.ts --bundle --platform=node --target=node12 --outdir=dist",
+    "dev": "npm run esbuild -- --watch",
+    "build": "npm run esbuild",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "esbuild": "esbuild src/cli.ts --bundle --platform=node --target=node12 --outdir=dist"
   },
   "devDependencies": {
     "@types/node": "^16.11.21",
