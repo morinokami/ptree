@@ -1,4 +1,4 @@
-import { lstat, readdir } from 'fs/promises';
+import { lstat, readdir } from "fs/promises";
 import { join } from "path";
 
 interface PTreeOptions {
@@ -15,7 +15,7 @@ interface DirEntry {
 async function ptree(
   root: string,
   { maxDepth = Infinity }: PTreeOptions = {},
-  indent = "",
+  indent = ""
 ): Promise<void> {
   if (maxDepth < 1) {
     return;
@@ -23,7 +23,7 @@ async function ptree(
 
   const entries: DirEntry[] = [];
   for (const name of await readdir(root)) {
-    const stat = await lstat(join(root, name))
+    const stat = await lstat(join(root, name));
     entries.push({ name, isDirectory: stat.isDirectory() });
   }
 
