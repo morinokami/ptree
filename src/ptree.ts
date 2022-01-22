@@ -1,7 +1,15 @@
-import { join } from "https://deno.land/std@0.122.0/path/mod.ts";
+import { lstat, readdir } from 'fs/promises';
+import { join } from "path";
 
 interface PTreeOptions {
   maxDepth?: number;
+}
+
+interface DirEntry {
+  isDirectory: boolean;
+  // isFile: boolean;
+  // isSymlink: boolean;
+  name: string;
 }
 
 async function ptree(
@@ -13,9 +21,10 @@ async function ptree(
     return;
   }
 
-  const entries: Deno.DirEntry[] = [];
-  for await (const entry of Deno.readDir(root)) {
-    entries.push({ ...entry });
+  const entries: DirEntry[] = [];
+  for (const name of await readdir(root)) {
+    const stat = await lstat(join(root, name))
+    entries.push({ name, isDirectory: stat.isDirectory() });
   }
 
   if (indent === "") {
@@ -33,4 +42,4 @@ async function ptree(
   }
 }
 
-await ptree(".", { maxDepth: 2 });
+ptree(".", { maxDepth: 2 });

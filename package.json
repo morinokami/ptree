@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "esbuild src/ptree.ts --bundle --platform=node --target=node12 --outdir=build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/morinokami/ptree/issues"
   },
-  "homepage": "https://github.com/morinokami/ptree#readme"
+  "homepage": "https://github.com/morinokami/ptree#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.21",
+    "esbuild": "^0.14.12",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
+  }
 }
