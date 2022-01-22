@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { lstat, readdir } from "fs/promises";
 import { join } from "path";
 
