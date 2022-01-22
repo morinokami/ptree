@@ -12,6 +12,17 @@ export interface DirEntry {
   name: string;
 }
 
+export async function readDir(path: string): Promise<DirEntry[]> {
+  const entries: DirEntry[] = [];
+
+  for (const name of await readdir(path)) {
+    const stat = await lstat(join(path, name));
+    entries.push({ name, isDirectory: stat.isDirectory() });
+  }
+
+  return entries;
+}
+
 export async function ptree(
   root: string,
   { maxDepth = Infinity }: PTreeOptions = {},
@@ -21,11 +32,7 @@ export async function ptree(
     return;
   }
 
-  const entries: DirEntry[] = [];
-  for (const name of await readdir(root)) {
-    const stat = await lstat(join(root, name));
-    entries.push({ name, isDirectory: stat.isDirectory() });
-  }
+  const entries = await readDir(root);
 
   if (indent === "") {
     console.log(`${root}`);
