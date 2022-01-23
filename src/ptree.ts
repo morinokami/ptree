@@ -1,8 +1,13 @@
 import { lstat, readdir } from "fs/promises";
-import { join } from "path";
+import { extname, join } from "path";
 
 export interface PTreeOptions {
+  emojis?: EmojiMap;
   maxDepth?: number;
+}
+
+export interface EmojiMap {
+  [ext: string]: string;
 }
 
 export interface DirEntry {
@@ -32,9 +37,13 @@ export async function readDir(path: string): Promise<DirEntry[]> {
   return entries;
 }
 
+export function getEmoji(ext: string, emojis: EmojiMap): string {
+  return emojis[ext] || "📄";
+}
+
 export async function ptree(
   root: string,
-  { maxDepth = Infinity }: PTreeOptions = {},
+  { emojis = {}, maxDepth = Infinity }: PTreeOptions = {},
   indent = ""
 ): Promise<void> {
   if (maxDepth < 1) {
@@ -62,12 +71,14 @@ export async function ptree(
     }
 
     const branch = entry === entries[entries.length - 1] ? "└── " : "├── ";
-    const emoji = entry.isDirectory ? "📁" : "📄";
+    const emoji = entry.isDirectory
+      ? "📁"
+      : getEmoji(extname(entry.name), emojis);
     process.stdout.write(`${indent}${branch}${emoji} ${entry.name}`);
 
     if (entry.isDirectory && maxDepth > 1) {
       const path = join(root, entry.name);
-      await ptree(path, { maxDepth: maxDepth - 1 }, `${indent}│   `);
+      await ptree(path, { emojis, maxDepth: maxDepth - 1 }, `${indent}│   `);
     } else {
       process.stdout.write("\n");
     }

@@ -3,7 +3,7 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
-import { ptree } from "./ptree";
+import { EmojiMap, ptree } from "./ptree";
 
 const argv = yargs(hideBin(process.argv))
   .usage("ptree <path> [options]")
@@ -14,13 +14,26 @@ const argv = yargs(hideBin(process.argv))
       describe: "Maximum depth to traverse",
       type: "number",
     },
+    e: {
+      alias: "emojis",
+      default: "{}",
+      describe: "Mapping of file extensions to emojis",
+      type: "string",
+    },
   })
   .help("h")
   .alias("h", "help")
   .check((argv) => {
     if ((!Number.isInteger(argv.d) && argv.d !== Infinity) || argv.d < 1) {
-      throw new Error("depth must be a number");
+      throw new Error("Error: depth must be a number");
     }
+
+    try {
+      JSON.parse(argv.e);
+    } catch (err) {
+      throw new Error("Error: emojis must be a valid JSON object");
+    }
+
     return true;
   })
   .string("_")
@@ -30,4 +43,5 @@ let path = ".";
 if (argv._.length > 0) {
   path = String(argv._[0]);
 }
-ptree(path, { maxDepth: argv.d });
+const emojis = JSON.parse(argv.e) as EmojiMap;
+ptree(path, { emojis, maxDepth: argv.d });
