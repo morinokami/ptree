@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import fs from "fs";
+import os from "os";
+import path from "path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
@@ -30,7 +33,7 @@ const argv = yargs(hideBin(process.argv))
 
     try {
       JSON.parse(argv.e);
-    } catch (err) {
+    } catch {
       throw new Error("Error: emojis must be a valid JSON object");
     }
 
@@ -39,9 +42,26 @@ const argv = yargs(hideBin(process.argv))
   .string("_")
   .parseSync();
 
-let path = ".";
+let root = ".";
 if (argv._.length > 0) {
-  path = String(argv._[0]);
+  root = String(argv._[0]);
 }
-const emojis = JSON.parse(argv.e) as EmojiMap;
-ptree(path, { emojis, maxDepth: argv.d });
+
+let configData = "{}";
+let emojis = {} as EmojiMap;
+try {
+  const homedir = os.homedir();
+  configData = fs.readFileSync(path.join(homedir, ".ptree.json"), "utf8");
+} catch {
+  // ignore
+}
+try {
+  const config = JSON.parse(configData);
+  emojis = config.emojis ?? {};
+} catch {
+  console.error("Error: Failed to parse config file");
+  process.exit(1);
+}
+emojis = { ...emojis, ...JSON.parse(argv.e) };
+
+ptree(root, { emojis, maxDepth: argv.d });
