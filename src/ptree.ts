@@ -7,17 +7,26 @@ export interface PTreeOptions {
 
 export interface DirEntry {
   isDirectory: boolean;
-  // isFile: boolean;
+  isFile: boolean;
   // isSymlink: boolean;
   name: string;
 }
+
+export const report = {
+  numDirs: 0,
+  numFiles: 0,
+};
 
 export async function readDir(path: string): Promise<DirEntry[]> {
   const entries: DirEntry[] = [];
 
   for (const name of await readdir(path)) {
     const stat = await lstat(join(path, name));
-    entries.push({ name, isDirectory: stat.isDirectory() });
+    entries.push({
+      name,
+      isDirectory: stat.isDirectory(),
+      isFile: stat.isFile(),
+    });
   }
 
   return entries;
@@ -46,6 +55,12 @@ export async function ptree(
   process.stdout.write("\n");
 
   for await (const entry of entries) {
+    if (entry.isDirectory) {
+      report.numDirs++;
+    } else if (entry.isFile) {
+      report.numFiles++;
+    }
+
     const branch = entry === entries[entries.length - 1] ? "└── " : "├── ";
     const emoji = entry.isDirectory ? "📁" : "📄";
     process.stdout.write(`${indent}${branch}${emoji} ${entry.name}`);
@@ -56,5 +71,13 @@ export async function ptree(
     } else {
       process.stdout.write("\n");
     }
+  }
+
+  if (indent.length === 0) {
+    process.stdout.write(
+      `\n${report.numDirs} ${
+        report.numDirs > 1 ? "directories" : "directory"
+      }, ${report.numFiles} ${report.numFiles > 1 ? "files" : "file"}\n`
+    );
   }
 }

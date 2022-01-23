@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import mockFs from "mock-fs";
 
-import { ptree, readDir } from "./ptree";
+import { ptree, readDir, report } from "./ptree";
 
 describe("readDir", () => {
   beforeEach(() => {
@@ -25,14 +25,17 @@ describe("readDir", () => {
     const expected = [
       {
         name: "bar.txt",
+        isFile: true,
         isDirectory: false,
       },
       {
         name: "baz",
+        isFile: false,
         isDirectory: true,
       },
       {
         name: "meow",
+        isFile: true,
         isDirectory: false,
       },
     ];
@@ -59,6 +62,8 @@ describe("ptree", () => {
         },
       }),
     });
+    report.numDirs = 0;
+    report.numFiles = 0;
   });
 
   afterEach(() => {
@@ -68,7 +73,11 @@ describe("ptree", () => {
   it("prints only name if empty directory given", async () => {
     await ptree("emptyDir");
     // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([["📁 emptyDir"], ["\n"]]);
+    expect(process.stdout.write.mock.calls).toEqual([
+      ["📁 emptyDir"],
+      ["\n"],
+      ["\n0 directory, 0 file\n"],
+    ]);
   });
 
   it("prints tree with emojis", async () => {
@@ -85,6 +94,7 @@ describe("ptree", () => {
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
+      ["\n1 directory, 3 files\n"],
     ]);
   });
 
@@ -106,6 +116,7 @@ describe("ptree", () => {
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
+      ["\n1 directory, 2 files\n"],
     ]);
   });
 
