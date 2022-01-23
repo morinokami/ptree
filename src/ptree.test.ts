@@ -65,6 +65,7 @@ describe("ptree", () => {
         "bar.ts": "",
         baz: {
           hello: "",
+          "goodbye.py": "",
         },
         meow: "",
       },
@@ -102,11 +103,13 @@ describe("ptree", () => {
       ["\n"],
       ["├── 📁 baz"],
       ["\n"],
+      ["│   ├── 📄 goodbye.py"],
+      ["\n"],
       ["│   └── 📄 hello"],
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
-      ["\n1 directory, 3 files\n"],
+      ["\n1 directory, 4 files\n"],
     ]);
   });
 
@@ -139,7 +142,7 @@ describe("ptree", () => {
   });
 
   it("prints specified emojis", async () => {
-    await ptree("foo", { extMap: { ".ts": "🦕" }, maxDepth: 1 });
+    await ptree("foo", { emojis: { ".ts": "🦕", ".py": "🐍" } });
     expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 foo"],
       ["\n"],
@@ -147,9 +150,13 @@ describe("ptree", () => {
       ["\n"],
       ["├── 📁 baz"],
       ["\n"],
+      ["│   ├── 🐍 goodbye.py"],
+      ["\n"],
+      ["│   └── 📄 hello"],
+      ["\n"],
       ["└── 📄 meow"],
       ["\n"],
-      ["\n1 directory, 2 files\n"],
+      ["\n1 directory, 4 files\n"],
     ]);
   });
 });
