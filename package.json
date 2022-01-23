@@ -1,8 +1,11 @@
 {
   "name": "ptree",
   "version": "0.0.1",
-  "description": "",
-  "keywords": [],
+  "description": "tree command prettified with emojis🌲",
+  "keywords": [
+    "tree",
+    "emoji"
+  ],
   "author": "Shinya Fujino <shf0811@gamil.com> (https://github.com/morinokami)",
   "license": "MIT",
   "repository": {
