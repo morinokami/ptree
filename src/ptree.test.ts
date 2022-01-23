@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import mockFs from "mock-fs";
 
-import { ptree, readDir, report } from "./ptree";
+import { getEmoji, ptree, readDir, report } from "./ptree";
 
 describe("readDir", () => {
   beforeEach(() => {
@@ -43,12 +43,26 @@ describe("readDir", () => {
   });
 });
 
+describe("getEmoji", () => {
+  it("returns the correct emoji for a specified file extension", () => {
+    const extMap = {
+      ".txt": "📄",
+      ".md": "📝",
+      ".ts": "🦕",
+    };
+    expect(getEmoji(".txt", extMap)).toBe("📄");
+    expect(getEmoji(".md", extMap)).toBe("📝");
+    expect(getEmoji(".ts", extMap)).toBe("🦕");
+    expect(getEmoji(".json", extMap)).toBe("📄");
+  });
+});
+
 describe("ptree", () => {
   beforeEach(() => {
     process.stdout.write = jest.fn();
     mockFs({
       foo: {
-        "bar.txt": "",
+        "bar.ts": "",
         baz: {
           hello: "",
         },
@@ -72,8 +86,7 @@ describe("ptree", () => {
 
   it("prints only name if empty directory given", async () => {
     await ptree("emptyDir");
-    // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 emptyDir"],
       ["\n"],
       ["\n0 directory, 0 file\n"],
@@ -82,11 +95,10 @@ describe("ptree", () => {
 
   it("prints tree with emojis", async () => {
     await ptree("foo");
-    // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 foo"],
       ["\n"],
-      ["├── 📄 bar.txt"],
+      ["├── 📄 bar.ts"],
       ["\n"],
       ["├── 📁 baz"],
       ["\n"],
@@ -100,17 +112,15 @@ describe("ptree", () => {
 
   it("prints nothing if depth < 1", async () => {
     await ptree("foo", { maxDepth: 0 });
-    // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([]);
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([]);
   });
 
   it("prints only direct children if depth = 1", async () => {
     await ptree("foo", { maxDepth: 1 });
-    // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 foo"],
       ["\n"],
-      ["├── 📄 bar.txt"],
+      ["├── 📄 bar.ts"],
       ["\n"],
       ["├── 📁 baz"],
       ["\n"],
@@ -122,10 +132,24 @@ describe("ptree", () => {
 
   it("prints only name if directory is unreadable", async () => {
     await ptree("unreadableDir");
-    // @ts-ignore
-    expect(process.stdout.write.mock.calls).toEqual([
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 unreadableDir"],
       [" [error opening dir]\n"],
+    ]);
+  });
+
+  it("prints specified emojis", async () => {
+    await ptree("foo", { extMap: { ".ts": "🦕" }, maxDepth: 1 });
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 foo"],
+      ["\n"],
+      ["├── 🦕 bar.ts"],
+      ["\n"],
+      ["├── 📁 baz"],
+      ["\n"],
+      ["└── 📄 meow"],
+      ["\n"],
+      ["\n1 directory, 2 files\n"],
     ]);
   });
 });
