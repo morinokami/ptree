@@ -12,7 +12,7 @@ export interface DirEntry {
   name: string;
 }
 
-const report = {
+export const report = {
   numDirs: 0,
   numFiles: 0,
 };
