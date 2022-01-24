@@ -197,4 +197,15 @@ describe("ptree", () => {
       ["\n1 directory, 4 files\n"],
     ]);
   });
+
+  it("prints only directories if specified", async () => {
+    await ptree("foo", { dirOnly: true });
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 foo"],
+      ["\n"],
+      ["└── 📁 baz"],
+      ["\n"],
+      ["\n1 directory, 0 file\n"],
+    ]);
+  });
 });
