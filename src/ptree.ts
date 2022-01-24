@@ -78,13 +78,15 @@ export async function ptree(
   }
 
   for await (const entry of entries) {
+    const isLast = entries.indexOf(entry) === entries.length - 1;
+
     if (entry.isDirectory) {
       report.numDirs++;
     } else if (entry.isFile) {
       report.numFiles++;
     }
 
-    const branch = entry === entries[entries.length - 1] ? "└── " : "├── ";
+    const branch = isLast ? "└── " : "├── ";
     const emoji = entry.isDirectory
       ? "📁"
       : getEmoji(extname(entry.name), emojis);
@@ -92,7 +94,12 @@ export async function ptree(
 
     if (entry.isDirectory && level > 1) {
       const path = join(root, entry.name);
-      await ptree(path, { emojis, dirOnly, level: level - 1 }, `${indent}│   `);
+      const bar = isLast ? "" : "│";
+      await ptree(
+        path,
+        { emojis, dirOnly, level: level - 1 },
+        `${indent}${bar}   `
+      );
     } else {
       process.stdout.write("\n");
     }
