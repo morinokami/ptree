@@ -76,6 +76,11 @@ describe("ptree", () => {
           "unreadable.txt": "",
         },
       }),
+      dirWithDotFiles: {
+        ".eslintrc.json": "",
+        ".prettierrc": "",
+        "package.json": "",
+      },
     });
     report.numDirs = 0;
     report.numFiles = 0;
@@ -157,6 +162,32 @@ describe("ptree", () => {
       ["└── 📄 meow"],
       ["\n"],
       ["\n1 directory, 4 files\n"],
+    ]);
+  });
+
+  it("doesn't print dot files by default", async () => {
+    await ptree("dirWithDotFiles");
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 dirWithDotFiles"],
+      ["\n"],
+      ["└── 📄 package.json"],
+      ["\n"],
+      ["\n0 directory, 1 file\n"],
+    ]);
+  });
+
+  it("prints dot files if specified", async () => {
+    await ptree("dirWithDotFiles", { printAllFiles: true });
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 dirWithDotFiles"],
+      ["\n"],
+      ["├── 📄 .eslintrc.json"],
+      ["\n"],
+      ["├── 📄 .prettierrc"],
+      ["\n"],
+      ["└── 📄 package.json"],
+      ["\n"],
+      ["\n0 directory, 3 files\n"],
     ]);
   });
 });
