@@ -3,7 +3,7 @@
 ptree prettifies `tree` command with emojis like this:
 
 ```
-$ ptree              
+$ ptree
 📁 .
 ├── 🤖 binary.bin
 ├── 📄 document.txt
@@ -40,7 +40,7 @@ $ ptree .
 * Specify the maximum display depth of the directory tree:
 
 ```
-$ ptree --depth 1 .
+$ ptree --level 1 .
 📁 .
 ├── 📁 bar
 └── 📄 foo.js
@@ -60,16 +60,29 @@ $ ptree --emojis '{".js": "🦏", ".ts": "🦕"}' .
 1 directory, 2 files
 ```
 
+* List directories only:
+
+```
+$ ptree -d .
+📁 .
+└── 📁 bar
+
+1 directory
+```
+
 * Show help:
 
 ```
-$ ptree --help                                 
+$ ptree --help
 ptree <path> [options]
 
 Options:
       --version  Show version number                                   [boolean]
-  -d, --depth    Maximum depth to traverse          [number] [default: Infinity]
+  -a, --all      Print all files and directories including those starting with a
+                  dot                                 [boolean] [default: false]
+  -d, --dir      Print directories only               [boolean] [default: false]
   -e, --emojis   Mapping of file extensions to emojis   [string] [default: "{}"]
+  -l, --level    Maximum depth to traverse          [number] [default: Infinity]
   -h, --help     Show help                                             [boolean]
 ```
 

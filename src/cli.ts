@@ -19,10 +19,10 @@ const argv = yargs(hideBin(process.argv))
       type: "boolean",
     },
     d: {
-      alias: "depth",
-      default: Infinity,
-      describe: "Maximum depth to traverse",
-      type: "number",
+      alias: "dir",
+      default: false,
+      describe: "Print directories only",
+      type: "boolean",
     },
     e: {
       alias: "emojis",
@@ -30,12 +30,18 @@ const argv = yargs(hideBin(process.argv))
       describe: "Mapping of file extensions to emojis",
       type: "string",
     },
+    l: {
+      alias: "level",
+      default: Infinity,
+      describe: "Maximum depth to traverse",
+      type: "number",
+    },
   })
   .help("h")
   .alias("h", "help")
   .check((argv) => {
-    if ((!Number.isInteger(argv.d) && argv.d !== Infinity) || argv.d < 1) {
-      throw new Error("Error: depth must be a number");
+    if ((!Number.isInteger(argv.l) && argv.l !== Infinity) || argv.l < 1) {
+      throw new Error("Error: level must be a number");
     }
 
     try {
@@ -71,4 +77,4 @@ try {
 }
 emojis = { ...emojis, ...JSON.parse(argv.e) };
 
-ptree(root, { printAll: argv.a, maxDepth: argv.d, emojis });
+ptree(root, { printAll: argv.a, dirOnly: argv.d, level: argv.l, emojis });
