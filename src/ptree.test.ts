@@ -121,13 +121,13 @@ describe("ptree", () => {
     ]);
   });
 
-  it("prints nothing if depth < 1", async () => {
-    await ptree("foo", { maxDepth: 0 });
+  it("prints nothing if level < 1", async () => {
+    await ptree("foo", { level: 0 });
     expect((process.stdout.write as jest.Mock).mock.calls).toEqual([]);
   });
 
-  it("prints only direct children if depth = 1", async () => {
-    await ptree("foo", { maxDepth: 1 });
+  it("prints only direct children if level = 1", async () => {
+    await ptree("foo", { level: 1 });
     expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 foo"],
       ["\n"],

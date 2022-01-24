@@ -3,7 +3,7 @@ import { extname, join } from "path";
 
 export interface PTreeOptions {
   emojis?: EmojiMap;
-  maxDepth?: number;
+  level?: number;
   printAll?: boolean;
 }
 
@@ -44,10 +44,10 @@ export function getEmoji(ext: string, emojis: EmojiMap): string {
 
 export async function ptree(
   root: string,
-  { emojis = {}, maxDepth = Infinity, printAll = false }: PTreeOptions = {},
+  { emojis = {}, level = Infinity, printAll = false }: PTreeOptions = {},
   indent = ""
 ): Promise<void> {
-  if (maxDepth < 1) {
+  if (level < 1) {
     return;
   }
 
@@ -81,9 +81,9 @@ export async function ptree(
       : getEmoji(extname(entry.name), emojis);
     process.stdout.write(`${indent}${branch}${emoji} ${entry.name}`);
 
-    if (entry.isDirectory && maxDepth > 1) {
+    if (entry.isDirectory && level > 1) {
       const path = join(root, entry.name);
-      await ptree(path, { emojis, maxDepth: maxDepth - 1 }, `${indent}│   `);
+      await ptree(path, { emojis, level: level - 1 }, `${indent}│   `);
     } else {
       process.stdout.write("\n");
     }

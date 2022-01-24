@@ -18,8 +18,8 @@ const argv = yargs(hideBin(process.argv))
         "Print all files and directories including those starting with a dot",
       type: "boolean",
     },
-    d: {
-      alias: "depth",
+    l: {
+      alias: "level",
       default: Infinity,
       describe: "Maximum depth to traverse",
       type: "number",
@@ -34,8 +34,8 @@ const argv = yargs(hideBin(process.argv))
   .help("h")
   .alias("h", "help")
   .check((argv) => {
-    if ((!Number.isInteger(argv.d) && argv.d !== Infinity) || argv.d < 1) {
-      throw new Error("Error: depth must be a number");
+    if ((!Number.isInteger(argv.l) && argv.l !== Infinity) || argv.l < 1) {
+      throw new Error("Error: level must be a number");
     }
 
     try {
@@ -71,4 +71,4 @@ try {
 }
 emojis = { ...emojis, ...JSON.parse(argv.e) };
 
-ptree(root, { printAll: argv.a, maxDepth: argv.d, emojis });
+ptree(root, { printAll: argv.a, level: argv.l, emojis });
