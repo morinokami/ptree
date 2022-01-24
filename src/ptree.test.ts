@@ -205,7 +205,7 @@ describe("ptree", () => {
       ["\n"],
       ["└── 📁 baz"],
       ["\n"],
-      ["\n1 directory, 0 file\n"],
+      ["\n1 directory\n"],
     ]);
   });
 });

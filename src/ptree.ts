@@ -99,10 +99,18 @@ export async function ptree(
   }
 
   if (indent.length === 0) {
-    process.stdout.write(
-      `\n${report.numDirs} ${
-        report.numDirs > 1 ? "directories" : "directory"
-      }, ${report.numFiles} ${report.numFiles > 1 ? "files" : "file"}\n`
-    );
+    if (dirOnly) {
+      process.stdout.write(
+        `\n${report.numDirs} ${
+          report.numDirs > 1 ? "directories" : "directory"
+        }\n`
+      );
+    } else {
+      process.stdout.write(
+        `\n${report.numDirs} ${
+          report.numDirs > 1 ? "directories" : "directory"
+        }, ${report.numFiles} ${report.numFiles > 1 ? "files" : "file"}\n`
+      );
+    }
   }
 }

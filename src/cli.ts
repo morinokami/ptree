@@ -18,17 +18,23 @@ const argv = yargs(hideBin(process.argv))
         "Print all files and directories including those starting with a dot",
       type: "boolean",
     },
-    l: {
-      alias: "level",
-      default: Infinity,
-      describe: "Maximum depth to traverse",
-      type: "number",
+    d: {
+      alias: "dir",
+      default: false,
+      describe: "Print directories only",
+      type: "boolean",
     },
     e: {
       alias: "emojis",
       default: "{}",
       describe: "Mapping of file extensions to emojis",
       type: "string",
+    },
+    l: {
+      alias: "level",
+      default: Infinity,
+      describe: "Maximum depth to traverse",
+      type: "number",
     },
   })
   .help("h")
@@ -71,4 +77,4 @@ try {
 }
 emojis = { ...emojis, ...JSON.parse(argv.e) };
 
-ptree(root, { printAll: argv.a, level: argv.l, emojis });
+ptree(root, { printAll: argv.a, dirOnly: argv.d, level: argv.l, emojis });
