@@ -11,6 +11,13 @@ import { EmojiMap, ptree } from "./ptree";
 const argv = yargs(hideBin(process.argv))
   .usage("ptree <path> [options]")
   .options({
+    a: {
+      alias: "all",
+      default: false,
+      describe:
+        "Print all files and directories including those starting with a dot",
+      type: "boolean",
+    },
     d: {
       alias: "depth",
       default: Infinity,
@@ -64,4 +71,4 @@ try {
 }
 emojis = { ...emojis, ...JSON.parse(argv.e) };
 
-ptree(root, { emojis, maxDepth: argv.d });
+ptree(root, { printAll: argv.a, maxDepth: argv.d, emojis });

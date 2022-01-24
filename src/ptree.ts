@@ -4,6 +4,7 @@ import { extname, join } from "path";
 export interface PTreeOptions {
   emojis?: EmojiMap;
   maxDepth?: number;
+  printAll?: boolean;
 }
 
 export interface EmojiMap {
@@ -43,7 +44,7 @@ export function getEmoji(ext: string, emojis: EmojiMap): string {
 
 export async function ptree(
   root: string,
-  { emojis = {}, maxDepth = Infinity }: PTreeOptions = {},
+  { emojis = {}, maxDepth = Infinity, printAll = false }: PTreeOptions = {},
   indent = ""
 ): Promise<void> {
   if (maxDepth < 1) {
@@ -64,6 +65,10 @@ export async function ptree(
   process.stdout.write("\n");
 
   for await (const entry of entries) {
+    if (entry.name.startsWith(".") && !printAll) {
+      continue;
+    }
+
     if (entry.isDirectory) {
       report.numDirs++;
     } else if (entry.isFile) {

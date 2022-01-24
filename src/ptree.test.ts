@@ -76,6 +76,14 @@ describe("ptree", () => {
           "unreadable.txt": "",
         },
       }),
+      dirWithDotFiles: {
+        ".github": {
+          "dependabot.yml": "",
+        },
+        ".eslintrc.json": "",
+        ".prettierrc": "",
+        "package.json": "",
+      },
     });
     report.numDirs = 0;
     report.numFiles = 0;
@@ -155,6 +163,36 @@ describe("ptree", () => {
       ["│   └── 📄 hello"],
       ["\n"],
       ["└── 📄 meow"],
+      ["\n"],
+      ["\n1 directory, 4 files\n"],
+    ]);
+  });
+
+  it("doesn't print dot files by default", async () => {
+    await ptree("dirWithDotFiles");
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 dirWithDotFiles"],
+      ["\n"],
+      ["└── 📄 package.json"],
+      ["\n"],
+      ["\n0 directory, 1 file\n"],
+    ]);
+  });
+
+  it("prints dot files if specified", async () => {
+    await ptree("dirWithDotFiles", { printAll: true });
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 dirWithDotFiles"],
+      ["\n"],
+      ["├── 📄 .eslintrc.json"],
+      ["\n"],
+      ["├── 📁 .github"],
+      ["\n"],
+      ["│   └── 📄 dependabot.yml"],
+      ["\n"],
+      ["├── 📄 .prettierrc"],
+      ["\n"],
+      ["└── 📄 package.json"],
       ["\n"],
       ["\n1 directory, 4 files\n"],
     ]);
