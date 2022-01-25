@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import mockFs from "mock-fs";
 
-import { getEmoji, ptree, readDir, report } from "./ptree";
+import { DirEntry, getEmoji, ptree, readDir, report } from "./ptree";
 
 describe("readDir", () => {
   beforeEach(() => {
@@ -22,21 +22,24 @@ describe("readDir", () => {
 
   it("returns dirEntries", async () => {
     const entries = await readDir("foo");
-    const expected = [
+    const expected: DirEntry[] = [
       {
         name: "bar.txt",
-        isFile: true,
         isDirectory: false,
+        isFile: true,
+        isSymLink: false,
       },
       {
         name: "baz",
-        isFile: false,
         isDirectory: true,
+        isFile: false,
+        isSymLink: false,
       },
       {
         name: "meow",
-        isFile: true,
         isDirectory: false,
+        isFile: true,
+        isSymLink: false,
       },
     ];
     expect(entries).toEqual(expected);
@@ -66,6 +69,7 @@ describe("ptree", () => {
         baz: {
           hello: "",
           "goodbye.py": "",
+          symlink: mockFs.symlink({ path: "../meow" }),
         },
         meow: "",
       },
@@ -113,7 +117,9 @@ describe("ptree", () => {
       ["\n"],
       ["│   ├── 📄 goodbye.py"],
       ["\n"],
-      ["│   └── 📄 hello"],
+      ["│   ├── 📄 hello"],
+      ["\n"],
+      ["│   └── 📄 symlink -> ../meow"],
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
@@ -160,7 +166,9 @@ describe("ptree", () => {
       ["\n"],
       ["│   ├── 🐍 goodbye.py"],
       ["\n"],
-      ["│   └── 📄 hello"],
+      ["│   ├── 📄 hello"],
+      ["\n"],
+      ["│   └── 📄 symlink -> ../meow"],
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
