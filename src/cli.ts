@@ -43,6 +43,12 @@ const argv = yargs(hideBin(process.argv))
       describe: "Include files matching this pattern",
       type: "string",
     },
+    x: {
+      alias: "exclude",
+      default: undefined,
+      describe: "Exclude files matching this pattern",
+      type: "string",
+    },
   })
   .help("h")
   .alias("h", "help")
@@ -90,4 +96,5 @@ ptree(root, {
   level: argv.l,
   emojis,
   include: argv.i,
+  exclude: argv.x,
 });

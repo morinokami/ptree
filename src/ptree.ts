@@ -9,6 +9,7 @@ export interface PTreeOptions {
   level?: number;
   printAll?: boolean;
   include?: string;
+  exclude?: string;
 }
 
 export interface EmojiMap {
@@ -32,7 +33,6 @@ export async function readDir(path: string): Promise<DirEntry[]> {
 
   for (const name of await readdir(path)) {
     const stats = await lstat(join(path, name));
-    stats.nlink;
     entries.push({
       name,
       isDirectory: stats.isDirectory(),
@@ -56,6 +56,7 @@ export async function ptree(
     level = Infinity,
     printAll = false,
     include = undefined,
+    exclude = undefined,
   }: PTreeOptions = {},
   indent = ""
 ): Promise<void> {
@@ -87,6 +88,11 @@ export async function ptree(
       (entry) => entry.isDirectory || isMatch(entry.name, include)
     );
   }
+  if (exclude) {
+    entries = entries.filter(
+      (entry) => entry.isDirectory || !isMatch(entry.name, exclude)
+    );
+  }
 
   for await (const entry of entries) {
     const path = join(root, entry.name);
@@ -94,7 +100,7 @@ export async function ptree(
 
     if (entry.isDirectory) {
       report.numDirs++;
-    } else if (entry.isFile) {
+    } else if (entry.isFile || entry.isSymLink) {
       report.numFiles++;
     }
 
@@ -108,10 +114,10 @@ export async function ptree(
     process.stdout.write(`${indent}${branch}${emoji} ${name}`);
 
     if (entry.isDirectory && level > 1) {
-      const bar = isLast ? "" : "│";
+      const bar = isLast ? " " : "│";
       await ptree(
         path,
-        { emojis, dirOnly, level: level - 1, include },
+        { emojis, dirOnly, level: level - 1, include, exclude },
         `${indent}${bar}   `
       );
     } else {
