@@ -22,7 +22,7 @@ const argv = yargs(hideBin(process.argv))
     d: {
       alias: "dir",
       default: false,
-      describe: "Print directories only",
+      describe: "Print only directories",
       type: "boolean",
     },
     e: {

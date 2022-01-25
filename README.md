@@ -51,7 +51,7 @@ $ ptree --level 1 .
 * Specify the emojis to show:
 
 ```
-$ ptree --emojis '{".js": "🦏", ".ts": "🦕"}' . 
+$ ptree --emojis '{".js": "🦏", ".ts": "🦕"}' .
 📁 .
 ├── 📁 bar
 │   └── 🦕 baz.ts
@@ -60,7 +60,7 @@ $ ptree --emojis '{".js": "🦏", ".ts": "🦕"}' .
 1 directory, 2 files
 ```
 
-* List directories only:
+* List only directories:
 
 ```
 $ ptree -d .
@@ -68,6 +68,28 @@ $ ptree -d .
 └── 📁 bar
 
 1 directory
+```
+
+* List only those files that matches the given pattern:
+
+```
+$ ptree . -i 'foo*'
+📁 .
+├── 📁 bar
+└── 📄 foo.js
+
+1 directory, 1 file
+```
+
+* List only those files that doesn't match the given pattern:
+
+```
+$ ptree . -x 'foo*'
+📁 .
+└── 📁 bar
+    └── 📄 baz.ts
+
+1 directory, 1 file
 ```
 
 * Show help:
@@ -80,9 +102,11 @@ Options:
       --version  Show version number                                   [boolean]
   -a, --all      Print all files and directories including those starting with a
                   dot                                 [boolean] [default: false]
-  -d, --dir      Print directories only               [boolean] [default: false]
+  -d, --dir      Print only directories               [boolean] [default: false]
   -e, --emojis   Mapping of file extensions to emojis   [string] [default: "{}"]
   -l, --level    Maximum depth to traverse          [number] [default: Infinity]
+  -i, --include  Include files matching this pattern                    [string]
+  -x, --exclude  Exclude files matching this pattern                    [string]
   -h, --help     Show help                                             [boolean]
 ```
 
