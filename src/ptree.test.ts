@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import mockFs from "mock-fs";
 
 import { DirEntry, getEmoji, ptree, readDir, report } from "./ptree";
