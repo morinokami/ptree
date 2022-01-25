@@ -3,6 +3,7 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
@@ -35,6 +36,12 @@ const argv = yargs(hideBin(process.argv))
       default: Infinity,
       describe: "Maximum depth to traverse",
       type: "number",
+    },
+    i: {
+      alias: "include",
+      default: undefined,
+      describe: "Include files matching this pattern",
+      type: "string",
     },
   })
   .help("h")
@@ -77,4 +84,10 @@ try {
 }
 emojis = { ...emojis, ...JSON.parse(argv.e) };
 
-ptree(root, { printAll: argv.a, dirOnly: argv.d, level: argv.l, emojis });
+ptree(root, {
+  printAll: argv.a,
+  dirOnly: argv.d,
+  level: argv.l,
+  emojis,
+  include: argv.i,
+});

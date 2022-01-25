@@ -1,11 +1,14 @@
 import { lstat, readdir, readlink } from "fs/promises";
 import { extname, join } from "path";
 
+import { isMatch } from "picomatch";
+
 export interface PTreeOptions {
   emojis?: EmojiMap;
   dirOnly?: boolean;
   level?: number;
   printAll?: boolean;
+  include?: string;
 }
 
 export interface EmojiMap {
@@ -52,6 +55,7 @@ export async function ptree(
     dirOnly = false,
     level = Infinity,
     printAll = false,
+    include = undefined,
   }: PTreeOptions = {},
   indent = ""
 ): Promise<void> {
@@ -78,6 +82,11 @@ export async function ptree(
   if (dirOnly) {
     entries = entries.filter((entry) => entry.isDirectory);
   }
+  if (include) {
+    entries = entries.filter(
+      (entry) => entry.isDirectory || isMatch(entry.name, include)
+    );
+  }
 
   for await (const entry of entries) {
     const path = join(root, entry.name);
@@ -102,7 +111,7 @@ export async function ptree(
       const bar = isLast ? "" : "│";
       await ptree(
         path,
-        { emojis, dirOnly, level: level - 1 },
+        { emojis, dirOnly, level: level - 1, include },
         `${indent}${bar}   `
       );
     } else {
@@ -114,14 +123,14 @@ export async function ptree(
     if (dirOnly) {
       process.stdout.write(
         `\n${report.numDirs} ${
-          report.numDirs > 1 ? "directories" : "directory"
+          report.numDirs === 1 ? "directory" : "directories"
         }\n`
       );
     } else {
       process.stdout.write(
         `\n${report.numDirs} ${
-          report.numDirs > 1 ? "directories" : "directory"
-        }, ${report.numFiles} ${report.numFiles > 1 ? "files" : "file"}\n`
+          report.numDirs === 1 ? "directory" : "directories"
+        }, ${report.numFiles} ${report.numFiles === 1 ? "file" : "files"}\n`
       );
     }
   }
