@@ -1,4 +1,4 @@
-import { lstat, readdir } from "fs/promises";
+import { lstat, readdir, readlink } from "fs/promises";
 import { extname, join } from "path";
 
 export interface PTreeOptions {
@@ -15,7 +15,7 @@ export interface EmojiMap {
 export interface DirEntry {
   isDirectory: boolean;
   isFile: boolean;
-  // isSymlink: boolean;
+  isSymLink: boolean;
   name: string;
 }
 
@@ -28,11 +28,13 @@ export async function readDir(path: string): Promise<DirEntry[]> {
   const entries: DirEntry[] = [];
 
   for (const name of await readdir(path)) {
-    const stat = await lstat(join(path, name));
+    const stats = await lstat(join(path, name));
+    stats.nlink;
     entries.push({
       name,
-      isDirectory: stat.isDirectory(),
-      isFile: stat.isFile(),
+      isDirectory: stats.isDirectory(),
+      isFile: stats.isFile(),
+      isSymLink: stats.isSymbolicLink(),
     });
   }
 
@@ -78,6 +80,7 @@ export async function ptree(
   }
 
   for await (const entry of entries) {
+    const path = join(root, entry.name);
     const isLast = entries.indexOf(entry) === entries.length - 1;
 
     if (entry.isDirectory) {
@@ -90,10 +93,12 @@ export async function ptree(
     const emoji = entry.isDirectory
       ? "📁"
       : getEmoji(extname(entry.name), emojis);
-    process.stdout.write(`${indent}${branch}${emoji} ${entry.name}`);
+    const name = entry.isSymLink
+      ? `${entry.name} -> ${await readlink(path)}`
+      : entry.name;
+    process.stdout.write(`${indent}${branch}${emoji} ${name}`);
 
     if (entry.isDirectory && level > 1) {
-      const path = join(root, entry.name);
       const bar = isLast ? "" : "│";
       await ptree(
         path,
