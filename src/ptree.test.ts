@@ -102,7 +102,7 @@ describe("ptree", () => {
     expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 emptyDir"],
       ["\n"],
-      ["\n0 directory, 0 file\n"],
+      ["\n0 directories, 0 files\n"],
     ]);
   });
 
@@ -183,7 +183,7 @@ describe("ptree", () => {
       ["\n"],
       ["└── 📄 package.json"],
       ["\n"],
-      ["\n0 directory, 1 file\n"],
+      ["\n0 directories, 1 file\n"],
     ]);
   });
 
@@ -214,6 +214,19 @@ describe("ptree", () => {
       ["└── 📁 baz"],
       ["\n"],
       ["\n1 directory\n"],
+    ]);
+  });
+
+  it("prints only the directory specified by the include option", async () => {
+    await ptree("foo", { include: "me*" });
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 foo"],
+      ["\n"],
+      ["├── 📁 baz"],
+      ["\n"],
+      ["└── 📄 meow"],
+      ["\n"],
+      ["\n1 directory, 1 file\n"],
     ]);
   });
 });
