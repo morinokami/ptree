@@ -123,7 +123,7 @@ describe("ptree", () => {
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
-      ["\n1 directory, 4 files\n"],
+      ["\n1 directory, 5 files\n"],
     ]);
   });
 
@@ -172,7 +172,7 @@ describe("ptree", () => {
       ["\n"],
       ["└── 📄 meow"],
       ["\n"],
-      ["\n1 directory, 4 files\n"],
+      ["\n1 directory, 5 files\n"],
     ]);
   });
 
@@ -217,7 +217,7 @@ describe("ptree", () => {
     ]);
   });
 
-  it("prints only the directory specified by the include option", async () => {
+  it("prints only the files specified by the include option", async () => {
     await ptree("foo", { include: "me*" });
     expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
       ["📁 foo"],
@@ -227,6 +227,25 @@ describe("ptree", () => {
       ["└── 📄 meow"],
       ["\n"],
       ["\n1 directory, 1 file\n"],
+    ]);
+  });
+
+  it("exclude the files specified by the exclude option", async () => {
+    await ptree("foo", { exclude: "me*" });
+    expect((process.stdout.write as jest.Mock).mock.calls).toEqual([
+      ["📁 foo"],
+      ["\n"],
+      ["├── 📄 bar.ts"],
+      ["\n"],
+      ["└── 📁 baz"],
+      ["\n"],
+      ["    ├── 📄 goodbye.py"],
+      ["\n"],
+      ["    ├── 📄 hello"],
+      ["\n"],
+      ["    └── 📄 symlink -> ../meow"],
+      ["\n"],
+      ["\n1 directory, 4 files\n"],
     ]);
   });
 });
