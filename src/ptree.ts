@@ -48,6 +48,39 @@ export function getEmoji(ext: string, emojis: EmojiMap): string {
   return emojis[ext] || "📄";
 }
 
+export function filterEntries(
+  entries: DirEntry[],
+  {
+    printAll = false,
+    dirOnly = false,
+    include,
+    exclude,
+  }: {
+    printAll?: boolean;
+    dirOnly?: boolean;
+    include?: string;
+    exclude?: string;
+  }
+): DirEntry[] {
+  if (!printAll) {
+    entries = entries.filter((entry) => !entry.name.startsWith("."));
+  }
+  if (dirOnly) {
+    entries = entries.filter((entry) => entry.isDirectory);
+  }
+  if (include) {
+    entries = entries.filter(
+      (entry) => entry.isDirectory || isMatch(entry.name, include)
+    );
+  }
+  if (exclude) {
+    entries = entries.filter(
+      (entry) => entry.isDirectory || !isMatch(entry.name, exclude)
+    );
+  }
+  return entries;
+}
+
 export async function ptree(
   root: string,
   {
@@ -77,22 +110,7 @@ export async function ptree(
   }
   process.stdout.write("\n");
 
-  if (!printAll) {
-    entries = entries.filter((entry) => !entry.name.startsWith("."));
-  }
-  if (dirOnly) {
-    entries = entries.filter((entry) => entry.isDirectory);
-  }
-  if (include) {
-    entries = entries.filter(
-      (entry) => entry.isDirectory || isMatch(entry.name, include)
-    );
-  }
-  if (exclude) {
-    entries = entries.filter(
-      (entry) => entry.isDirectory || !isMatch(entry.name, exclude)
-    );
-  }
+  entries = filterEntries(entries, { printAll, dirOnly, include, exclude });
 
   for await (const entry of entries) {
     const path = join(root, entry.name);
@@ -117,7 +135,7 @@ export async function ptree(
       const bar = isLast ? " " : "│";
       await ptree(
         path,
-        { emojis, dirOnly, level: level - 1, include, exclude },
+        { emojis, dirOnly, level: level - 1, printAll, include, exclude },
         `${indent}${bar}   `
       );
     } else {

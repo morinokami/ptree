@@ -1,6 +1,13 @@
 import mockFs from "mock-fs";
 
-import { DirEntry, getEmoji, ptree, readDir, report } from "./ptree";
+import {
+  DirEntry,
+  filterEntries,
+  getEmoji,
+  ptree,
+  readDir,
+  report,
+} from "./ptree";
 
 describe("readDir", () => {
   beforeEach(() => {
@@ -56,6 +63,57 @@ describe("getEmoji", () => {
     expect(getEmoji(".md", extMap)).toBe("📝");
     expect(getEmoji(".ts", extMap)).toBe("🦕");
     expect(getEmoji(".json", extMap)).toBe("📄");
+  });
+});
+
+describe("filterEntries", () => {
+  const entries = [
+    {
+      name: ".foo",
+      isDirectory: false,
+      isFile: true,
+      isSymLink: false,
+    },
+    {
+      name: "bar.txt",
+      isDirectory: false,
+      isFile: true,
+      isSymLink: false,
+    },
+    {
+      name: "baz",
+      isDirectory: true,
+      isFile: false,
+      isSymLink: false,
+    },
+    {
+      name: "meow",
+      isDirectory: false,
+      isFile: true,
+      isSymLink: false,
+    },
+  ];
+
+  it("filters out dot files if printAll = false", () => {
+    expect(filterEntries(entries, { printAll: false })).toEqual([
+      ...entries.slice(1),
+    ]);
+  });
+
+  it("returns only directories if dirOnly = true", () => {
+    expect(filterEntries(entries, { dirOnly: true })).toEqual([entries[2]]);
+  });
+
+  it("returns files that matches the include option", () => {
+    expect(filterEntries(entries, { include: "ba*" })).toEqual(
+      entries.slice(1, -1)
+    );
+  });
+
+  it("returns files that does not match the exclude option", () => {
+    expect(filterEntries(entries, { exclude: "ba*" })).toEqual([
+      ...entries.slice(2, 4),
+    ]);
   });
 });
 
