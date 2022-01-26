@@ -84,6 +84,14 @@ export function filterEntries(
   return entries;
 }
 
+function getStats(r: typeof report, dirOnly: boolean): string {
+  return (
+    `\n${r.numDirs} ${r.numDirs === 1 ? "directory" : "directories"}` +
+    (dirOnly ? "" : `, ${r.numFiles} ${r.numFiles === 1 ? "file" : "files"}`) +
+    "\n"
+  );
+}
+
 export async function ptree(
   root: string,
   {
@@ -147,18 +155,6 @@ export async function ptree(
   }
 
   if (indent.length === 0) {
-    if (dirOnly) {
-      process.stdout.write(
-        `\n${report.numDirs} ${
-          report.numDirs === 1 ? "directory" : "directories"
-        }\n`
-      );
-    } else {
-      process.stdout.write(
-        `\n${report.numDirs} ${
-          report.numDirs === 1 ? "directory" : "directories"
-        }, ${report.numFiles} ${report.numFiles === 1 ? "file" : "files"}\n`
-      );
-    }
+    process.stdout.write(getStats(report, dirOnly));
   }
 }
