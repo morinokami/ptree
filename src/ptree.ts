@@ -3,6 +3,9 @@ import { extname, join } from "path";
 
 import { isMatch } from "picomatch";
 
+const EMOJI_DIR = "📁";
+const EMOJI_FILE = "📄";
+
 export interface PTreeOptions {
   emojis?: EmojiMap;
   dirOnly?: boolean;
@@ -45,7 +48,48 @@ export async function readDir(path: string): Promise<DirEntry[]> {
 }
 
 export function getEmoji(ext: string, emojis: EmojiMap): string {
-  return emojis[ext] || "📄";
+  return emojis[ext] || EMOJI_FILE;
+}
+
+export function filterEntries(
+  entries: DirEntry[],
+  {
+    printAll = false,
+    dirOnly = false,
+    include,
+    exclude,
+  }: {
+    printAll?: boolean;
+    dirOnly?: boolean;
+    include?: string;
+    exclude?: string;
+  }
+): DirEntry[] {
+  if (!printAll) {
+    entries = entries.filter((entry) => !entry.name.startsWith("."));
+  }
+  if (dirOnly) {
+    entries = entries.filter((entry) => entry.isDirectory);
+  }
+  if (include) {
+    entries = entries.filter(
+      (entry) => entry.isDirectory || isMatch(entry.name, include)
+    );
+  }
+  if (exclude) {
+    entries = entries.filter(
+      (entry) => entry.isDirectory || !isMatch(entry.name, exclude)
+    );
+  }
+  return entries;
+}
+
+function getStats(r: typeof report, dirOnly: boolean): string {
+  return (
+    `\n${r.numDirs} ${r.numDirs === 1 ? "directory" : "directories"}` +
+    (dirOnly ? "" : `, ${r.numFiles} ${r.numFiles === 1 ? "file" : "files"}`) +
+    "\n"
+  );
 }
 
 export async function ptree(
@@ -65,7 +109,7 @@ export async function ptree(
   }
 
   if (indent.length === 0) {
-    process.stdout.write(`📁 ${root}`);
+    process.stdout.write(`${EMOJI_DIR} ${root}`);
   }
 
   let entries: DirEntry[] = [];
@@ -77,22 +121,7 @@ export async function ptree(
   }
   process.stdout.write("\n");
 
-  if (!printAll) {
-    entries = entries.filter((entry) => !entry.name.startsWith("."));
-  }
-  if (dirOnly) {
-    entries = entries.filter((entry) => entry.isDirectory);
-  }
-  if (include) {
-    entries = entries.filter(
-      (entry) => entry.isDirectory || isMatch(entry.name, include)
-    );
-  }
-  if (exclude) {
-    entries = entries.filter(
-      (entry) => entry.isDirectory || !isMatch(entry.name, exclude)
-    );
-  }
+  entries = filterEntries(entries, { printAll, dirOnly, include, exclude });
 
   for await (const entry of entries) {
     const path = join(root, entry.name);
@@ -106,7 +135,7 @@ export async function ptree(
 
     const branch = isLast ? "└── " : "├── ";
     const emoji = entry.isDirectory
-      ? "📁"
+      ? EMOJI_DIR
       : getEmoji(extname(entry.name), emojis);
     const name = entry.isSymLink
       ? `${entry.name} -> ${await readlink(path)}`
@@ -117,7 +146,7 @@ export async function ptree(
       const bar = isLast ? " " : "│";
       await ptree(
         path,
-        { emojis, dirOnly, level: level - 1, include, exclude },
+        { emojis, dirOnly, level: level - 1, printAll, include, exclude },
         `${indent}${bar}   `
       );
     } else {
@@ -126,18 +155,6 @@ export async function ptree(
   }
 
   if (indent.length === 0) {
-    if (dirOnly) {
-      process.stdout.write(
-        `\n${report.numDirs} ${
-          report.numDirs === 1 ? "directory" : "directories"
-        }\n`
-      );
-    } else {
-      process.stdout.write(
-        `\n${report.numDirs} ${
-          report.numDirs === 1 ? "directory" : "directories"
-        }, ${report.numFiles} ${report.numFiles === 1 ? "file" : "files"}\n`
-      );
-    }
+    process.stdout.write(getStats(report, dirOnly));
   }
 }
