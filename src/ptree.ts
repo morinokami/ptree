@@ -3,6 +3,9 @@ import { extname, join } from "path";
 
 import { isMatch } from "picomatch";
 
+const EMOJI_DIR = "📁";
+const EMOJI_FILE = "📄";
+
 export interface PTreeOptions {
   emojis?: EmojiMap;
   dirOnly?: boolean;
@@ -45,7 +48,7 @@ export async function readDir(path: string): Promise<DirEntry[]> {
 }
 
 export function getEmoji(ext: string, emojis: EmojiMap): string {
-  return emojis[ext] || "📄";
+  return emojis[ext] || EMOJI_FILE;
 }
 
 export function filterEntries(
@@ -98,7 +101,7 @@ export async function ptree(
   }
 
   if (indent.length === 0) {
-    process.stdout.write(`📁 ${root}`);
+    process.stdout.write(`${EMOJI_DIR} ${root}`);
   }
 
   let entries: DirEntry[] = [];
@@ -124,7 +127,7 @@ export async function ptree(
 
     const branch = isLast ? "└── " : "├── ";
     const emoji = entry.isDirectory
-      ? "📁"
+      ? EMOJI_DIR
       : getEmoji(extname(entry.name), emojis);
     const name = entry.isSymLink
       ? `${entry.name} -> ${await readlink(path)}`
