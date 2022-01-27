@@ -8,6 +8,13 @@
   ],
   "author": "Shinya Fujino <shf0811@gamil.com> (https://github.com/morinokami)",
   "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/morinokami/ptree.git"

@@ -1,4 +1,5 @@
-import { lstat, readdir, readlink } from "fs/promises";
+import { promises } from "fs";
+const { lstat, readdir, readlink } = promises;
 import { extname, join } from "path";
 
 import { isMatch } from "picomatch";
