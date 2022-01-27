@@ -63,7 +63,7 @@ $ ptree --emojis '{".js": "🦏", ".ts": "🦕"}' .
 * List only directories:
 
 ```
-$ ptree -d .
+$ ptree --dir .
 📁 .
 └── 📁 bar
 
@@ -73,7 +73,7 @@ $ ptree -d .
 * List only those files that matches the given pattern:
 
 ```
-$ ptree . -i 'foo*'
+$ ptree --include 'foo*' .
 📁 .
 ├── 📁 bar
 └── 📄 foo.js
@@ -84,7 +84,7 @@ $ ptree . -i 'foo*'
 * List only those files that doesn't match the given pattern:
 
 ```
-$ ptree . -x 'foo*'
+$ ptree --exclude 'foo*' .
 📁 .
 └── 📁 bar
     └── 📄 baz.ts
