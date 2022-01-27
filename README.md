@@ -19,7 +19,7 @@ $ ptree
 ## Installation
 
 ```sh
-$ npm install -g ptree
+$ npm install -g @shf0811/ptree
 ```
 
 ## Usage
