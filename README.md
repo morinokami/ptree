@@ -28,7 +28,6 @@ $ npm install -g @shf0811/ptree
 
 ```
 $ ptree .
-.
 📁 .
 ├── 📁 bar
 │   └── 📄 baz.ts
