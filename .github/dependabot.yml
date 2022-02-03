@@ -7,3 +7,4 @@ updates:
     reviewers:
       - "morinokami"
     versioning-strategy: increase-if-necessary
+    target-branch: "develop"
